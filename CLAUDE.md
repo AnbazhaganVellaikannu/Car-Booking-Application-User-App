@@ -32,7 +32,7 @@ Required env vars (see `.env.example`): `DATABASE_URL` (Postgres, e.g. Neon), `B
 
 **Distance/fare** are computed with a haversine great-circle distance multiplied by a fixed road-winding factor (`routeDistanceKm` in `server/lib/geo.js`) — there's no real routing/mapping API involved. Vehicle types and their fare formulas (`baseFare + perKmRate * distanceKm`) live in `server/lib/vehicleTypes.js` and are also served as-is via `GET /api/vehicle-types` for the frontend vehicle picker.
 
-**Geocoding proxies OpenStreetMap Nominatim** (`server/routes/geocode.js`) rather than calling it from the browser, to control rate/User-Agent per Nominatim's usage policy and avoid exposing it directly.
+**Geocoding proxies LocationIQ** (`server/routes/geocode.js`, requires `LOCATIONIQ_API_KEY`) rather than calling it from the browser, to keep the key server-side. It was originally a direct proxy to OpenStreetMap Nominatim, but Nominatim's public instance rate-limits/blocks shared hosting IPs (confirmed in production: 429s from Render's IP despite low request volume) — LocationIQ is OSM-data-based with the same `display_name`/`lat`/`lon` response shape, just on infrastructure meant for production traffic.
 
 **Route protection**: almost every screen after onboarding is wrapped in `<PrivateRoute>` (`src/components/PrivateRoute.jsx`), which redirects to `/signin` unless `useSession()` has a user. All routes are declared centrally in `src/App.jsx`.
 
