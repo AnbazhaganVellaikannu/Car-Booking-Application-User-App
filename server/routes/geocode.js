@@ -21,7 +21,12 @@ geocodeRouter.get('/search', ah(async (req, res) => {
   url.searchParams.set('addressdetails', '0');
 
   const upstream = await fetch(url, { headers: HEADERS });
-  if (!upstream.ok) return res.status(502).json({ error: 'Geocoding service unavailable' });
+  if (!upstream.ok) {
+    console.error(
+      `Nominatim /search failed: ${upstream.status} ${upstream.statusText} — body: ${(await upstream.text()).slice(0, 500)}`
+    );
+    return res.status(502).json({ error: 'Geocoding service unavailable' });
+  }
   const data = await upstream.json();
   res.json(
     data.map((d) => ({
@@ -45,7 +50,12 @@ geocodeRouter.get('/reverse', ah(async (req, res) => {
   url.searchParams.set('format', 'jsonv2');
 
   const upstream = await fetch(url, { headers: HEADERS });
-  if (!upstream.ok) return res.status(502).json({ error: 'Geocoding service unavailable' });
+  if (!upstream.ok) {
+    console.error(
+      `Nominatim /reverse failed: ${upstream.status} ${upstream.statusText} — body: ${(await upstream.text()).slice(0, 500)}`
+    );
+    return res.status(502).json({ error: 'Geocoding service unavailable' });
+  }
   const data = await upstream.json();
   res.json({ label: data.display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`, lat, lng });
 }));

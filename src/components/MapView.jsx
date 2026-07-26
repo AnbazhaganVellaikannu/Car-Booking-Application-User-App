@@ -44,7 +44,14 @@ export default function MapView({ pickup, dropoff, driver, height = '280px', cla
 
   return (
     <div className={`overflow-hidden ${className}`} style={{ height }}>
-      <MapContainer center={center} zoom={13} scrollWheelZoom={false} zoomControl={false} style={{ height: '100%', width: '100%' }}>
+      <MapContainer
+        center={center}
+        zoom={13}
+        scrollWheelZoom={false}
+        zoomControl={false}
+        fadeAnimation={false}
+        style={{ height: '100%', width: '100%' }}
+      >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
